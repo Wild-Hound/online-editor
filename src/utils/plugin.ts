@@ -8,8 +8,13 @@ export const unpkgPlugin = () => {
       build.onResolve({ filter: /.*/ }, async (args: any) => {
         console.log("onResolve", args);
 
-        if (args.importer) {
+        if (args.importer === "index.js") {
           return { path: `https://unpkg.com/${args.path}`, namespace: "a" };
+        }
+
+        if (args.importer) {
+          const str = args.path.replace("./", "");
+          return { path: `${args.importer}/${str}`, namespace: "a" };
         }
 
         return { path: args.path, namespace: "a" };
@@ -22,8 +27,8 @@ export const unpkgPlugin = () => {
           return {
             loader: "jsx",
             contents: `
-                import message from "tiny-test-pkg";
-                console.log(message);
+                import react from "react";
+                console.log("hi");
                 `,
           };
         }
