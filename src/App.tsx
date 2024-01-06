@@ -52,14 +52,12 @@ function App() {
       entryPoints: ["index.js"],
       bundle: true,
       write: false,
+      define: {
+        "process.env.NODE_ENV": "'production'",
+        global: "window",
+      },
       plugins: [unpkgPlugin()],
     });
-
-    console.log(result.outputFiles[0].text);
-    // let result = await esbuild.transform(code, {
-    //   loader: "ts",
-    // });
-    // setTranslatedCode(result?.code);
   };
 
   return (
