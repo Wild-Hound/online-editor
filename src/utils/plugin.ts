@@ -1,4 +1,5 @@
 import * as esbuild from "esbuild-wasm";
+import axios from "axios";
 
 export const unpkgPlugin = () => {
   return {
@@ -6,6 +7,11 @@ export const unpkgPlugin = () => {
     setup(build: esbuild.PluginBuild) {
       build.onResolve({ filter: /.*/ }, async (args: any) => {
         console.log("onResolve", args);
+
+        if (args.importer) {
+          return { path: `https://unpkg.com/${args.path}`, namespace: "a" };
+        }
+
         return { path: args.path, namespace: "a" };
       });
 
@@ -16,15 +22,17 @@ export const unpkgPlugin = () => {
           return {
             loader: "jsx",
             contents: `
-                import message from "./message";
+                import message from "tiny-test-pkg";
                 console.log(message);
                 `,
           };
         }
 
+        const { data } = await axios.get(args.path);
+
         return {
           loader: "jsx",
-          contents: `export default "hello there!"`,
+          contents: data,
         };
       });
     },
