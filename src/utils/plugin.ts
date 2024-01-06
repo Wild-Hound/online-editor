@@ -12,6 +12,14 @@ export const unpkgPlugin = () => {
           return { path: `https://unpkg.com/${args.path}`, namespace: "a" };
         }
 
+        if (args.resolveDir && args.resolveDir !== "/") {
+          const str = args.path.replace("./", "");
+          return {
+            path: `https://unpkg.com${args.resolveDir}/${str}`,
+            namespace: "a",
+          };
+        }
+
         if (args.importer) {
           const str = args.path.replace("./", "");
           return { path: `${args.importer}/${str}`, namespace: "a" };
@@ -27,17 +35,18 @@ export const unpkgPlugin = () => {
           return {
             loader: "jsx",
             contents: `
-                import react from "react";
+                import react from "nested-test-pkg";
                 console.log("hi");
                 `,
           };
         }
 
-        const { data } = await axios.get(args.path);
+        const { data, request } = await axios.get(args.path);
 
         return {
           loader: "jsx",
           contents: data,
+          resolveDir: new URL("./", request.responseURL).pathname,
         };
       });
     },
