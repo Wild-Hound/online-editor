@@ -5,6 +5,7 @@ import Preview from "./containers/Preview";
 import styles from "./styles/Home.module.scss";
 import { useEffect, useRef, useState } from "react";
 import * as esbuild from "esbuild-wasm";
+import { unpkgPlugin } from "./utils/plugin";
 
 const { editor_wrappers } = styles;
 
@@ -25,10 +26,21 @@ function App() {
   }, []);
 
   const startESBuildService = async () => {
-    await esbuild.initialize({
-      worker: true,
-      wasmURL: "/esbuild.wasm",
-    });
+    try {
+      await esbuild.transform("console.log('hello world')", {
+        loader: "ts",
+      });
+    } catch (err) {
+      if (
+        `${err}`.includes('You need to call "initialize" before calling this')
+      ) {
+        await esbuild.initialize({
+          worker: true,
+          wasmURL: "/esbuild.wasm",
+        });
+        console.info("init esbuild");
+      }
+    }
   };
 
   const handleEditorChange = (value: string | undefined) => {
@@ -36,10 +48,18 @@ function App() {
   };
 
   const transformCode = async (code: string) => {
-    let result = await esbuild.transform(code, {
-      loader: "ts",
+    const result = await esbuild.build({
+      entryPoints: ["index.js"],
+      bundle: true,
+      write: false,
+      plugins: [unpkgPlugin()],
     });
-    setTranslatedCode(result?.code);
+
+    console.log(result.outputFiles[0].text);
+    // let result = await esbuild.transform(code, {
+    //   loader: "ts",
+    // });
+    // setTranslatedCode(result?.code);
   };
 
   return (
