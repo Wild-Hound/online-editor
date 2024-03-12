@@ -1,8 +1,6 @@
-import Editor from "@monaco-editor/react";
 import styles from "../styles/CodeEditor.module.scss";
-import { useDebouncedState } from "@mantine/hooks";
 import React, { useEffect } from "react";
-import * as esbuild from "esbuild";
+import Editor, { useMonaco } from "@monaco-editor/react";
 
 const { wrapper } = styles;
 
@@ -11,9 +9,24 @@ interface Props {
 }
 
 const CodeEditor: React.FC<Props> = ({ onChange }) => {
+  const monaco = useMonaco();
+
+  useEffect(() => {
+    if (monaco) {
+      monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+        diagnosticCodesToIgnore: [2792],
+      });
+      monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+        diagnosticCodesToIgnore: [2792],
+      });
+
+      console.log(monaco);
+    }
+  }, [monaco]);
+
   function handleEditorValidation(markers: any[]) {
     // model markers
-    markers.forEach((marker) => console.log("onValidate:", marker.message));
+    markers.forEach((marker) => console.log("onValidate:", marker));
   }
 
   return (

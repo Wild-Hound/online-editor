@@ -56,7 +56,7 @@ function App() {
         "process.env.NODE_ENV": "'production'",
         global: "window",
       },
-      plugins: [unpkgPlugin()],
+      plugins: [unpkgPlugin(code)],
     });
 
     console.log(result?.outputFiles[0].text);
