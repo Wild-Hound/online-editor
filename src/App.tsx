@@ -58,6 +58,8 @@ function App() {
       },
       plugins: [unpkgPlugin()],
     });
+
+    console.log(result?.outputFiles[0].text);
   };
 
   return (
