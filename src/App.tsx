@@ -5,7 +5,8 @@ import Preview from "./containers/Preview";
 import styles from "./styles/Home.module.scss";
 import { useEffect, useRef, useState } from "react";
 import * as esbuild from "esbuild-wasm";
-import { unpkgPlugin } from "./utils/plugin";
+import { unpkgPlugin } from "./utils/unpkg-plugin";
+import { fetchPlugin } from "./utils/fetch-plugin";
 
 const { editor_wrappers } = styles;
 
@@ -56,7 +57,7 @@ function App() {
         "process.env.NODE_ENV": "'production'",
         global: "window",
       },
-      plugins: [unpkgPlugin(code)],
+      plugins: [unpkgPlugin(), fetchPlugin(code)],
     });
 
     console.log(result?.outputFiles[0].text);
