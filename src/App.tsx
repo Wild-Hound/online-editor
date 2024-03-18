@@ -60,7 +60,7 @@ function App() {
       plugins: [unpkgPlugin(), fetchPlugin(code)],
     });
 
-    console.log(result?.outputFiles[0].text);
+    setTranslatedCode(result?.outputFiles[0].text);
   };
 
   return (
